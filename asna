@@ -1,0 +1,16 @@
+Asna/
+├── access_control.py       # Módulo de controle de acesso
+├── core.py                 # Lógica principal do agente
+├── agente_asna.py          # Código relacionado ao agente Asna
+├── skills/
+│   ├── __init__.py         # Inicialização do módulo de habilidades
+│   ├── core.py             # Habilidades básicas
+│   └── metaverso.py        # Habilidades específicas do metaverso
+├── tests/
+│   ├── test_AsnaAgent.py   # Testes unitários para AsnaAgent
+│   └── test_AccessControl.py # Testes unitários para AccessControl
+└── main.py                 # Ponto de entrada principal
+
+{
+  "python.analysis.extraPaths": ["./"]
+}
