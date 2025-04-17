@@ -1,3 +1,0 @@
-# Asna
-IA amiga prestativa 
-
