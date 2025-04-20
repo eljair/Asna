@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Build
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Directories
+logs/
+data/
+models/
+.vscode/
+.idea/
+
+# Files
+*.log
+*.sqlite
+.env
+
+numpy==1.21.0
+requests==2.26.0
+python-dotenv==0.19.0
+.qodo

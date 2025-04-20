@@ -1,0 +1,6 @@
+{
+  "python.analysis.disabled": [
+    "reportWildcardImportFromLibrary",
+    "reportMissingImports"
+  ]
+}

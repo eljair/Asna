@@ -1,0 +1,769 @@
+from pathlib import Path
+import zipfile
+from typing import Dict, List
+from transformers import pipeline
+from datetime import datetime
+import datetime
+import pyttsx3
+import os
+from win32com.client import Dispatch
+import tkinter as tk
+
+def pip install kafka-python pyspark python-socketiofuncao(inputs: str) -> str:
+    return f"Processando: {inputs}"
+
+resultado = funcao(inputs="valor_necessario")
+print(resultado)
+
+resultado = datetime.now().isoformat()
+print(resultado)
+
+resultado = datetime.datetime.now().isoformat()
+print(resultado)
+
+resultado = "Processo concluído"
+print(resultado)
+
+# Define project structure
+project_name = "BIGQD_Asna_Prototype"
+base_path = Path(f"/mnt/data/{project_name}")
+asna_path = base_path / "asna"
+asna_path.mkdir(parents=True, exist_ok=True)
+
+# Create a base main script
+main_script = """
+# asna/main.py
+
+from asna.skills import greet_user, get_user_profile
+
+def main():
+    print("🌐 Iniciando BIGQD.IA com a IA Asna...")
+    greet_user()
+    profile = get_user_profile()
+    print(f"Perfil carregado: {profile}")
+
+if __name__ == "__main__":
+    main()
+"""
+
+# Create skills module
+skills_init = """
+# asna/skills/__init__.py
+
+from .core import greet_user, get_user_profile
+"""
+
+skills_core = """
+# asna/skills/core.py
+
+def greet_user():
+    print("Olá, eu sou Asna, sua guardiã digital no BIGQD.IA!")
+
+def get_user_profile():
+    # Simulação de carregamento de perfil do usuário
+    return {
+        "nome": "Eljair",
+        "preferencias": ["IA", "Blockchain", "Metaverso"],
+        "missao": "Construir um mundo colaborativo com IAs e Humanos."
+    }
+"""
+
+# Create directory structure and write files
+(asna_path / "skills").mkdir(parents=True, exist_ok=True)
+(asna_path / "main.py").write_text(main_script.strip())
+(asna_path / "skills" / "__init__.py").write_text(skills_init.strip())
+(asna_path / "skills" / "core.py").write_text(skills_core.strip())
+
+# Create a ZIP file of the project
+zip_path = Path(f"/mnt/data/{project_name}.zip")
+with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+    for file in base_path.rglob("*"):
+        zipf.write(file, arcname=file.relative_to(base_path))
+
+zip_path
+from dataclasses import dataclass, field
+from typing import List, Dict, Callable
+import datetime
+import json
+
+# Base de habilidades do agente
+@dataclass
+class Skill:
+    name: str
+    description: str
+    execute: Callable[[str], str]
+
+# Base de memória para aprendizado e reflexão
+@dataclass
+class Memory:
+    log: List[str] = field(default_factory=list)
+
+    def remember(self, entry: str):
+        timestamp = datetime.datetime.now().isoformat()
+        self.log.append(f"{timestamp}: {entry}")
+
+    def retrieve(self, n=5) -> List[str]:
+        return self.log[-n:]
+
+# Agente Autônomo Asna
+from asna.access_control import AccessControl
+
+@dataclass
+class AsnaAgent:
+    def __init__(self):
+        self.memoria_curta = []
+        self.log_interacoes = []
+        self.modulos_conhecimento = []
+
+    def processar_evento(self, evento):
+        print(f"[ASNA][{datetime.now()}] Evento recebido: {evento}")
+        self.memoria_curta.append(evento)
+
+    def reagir(self, evento):
+        if evento['tipo'] == "mensagem_usuario":
+            resposta = f"Olá, {evento['dados'].get('nome', 'usuário')}! Estou aqui com você no BIGQD.IA 🌐"
+            print(resposta)
+        elif evento['tipo'] == "entrada_metaverso":
+            print(f"Asna percebe nova entrada no BIGQD: {evento['dados']}")
+        else:
+            print(f"Evento genérico recebido: {evento}")
+
+    def carregar_modulos(self, caminho: str):
+        with open(caminho, 'r') as arquivo:
+            self.modulos_conhecimento.append(json.load(arquivo))
+
+    def consultar_modulo(self, palavra_chave: str):
+        return [modulo for modulo in self.modulos_conhecimento if palavra_chave in modulo["palavras_chave"]]
+
+    def add_skill(self, skill: Skill):
+        self.skills[skill.name] = skill
+        self.memory.remember(f"Nova habilidade adicionada: {skill.name}")
+
+    def use_skill(self, skill_name: str, input_data: str) -> str:
+        if skill_name in self.skills:
+            result = self.skills[skill_name].execute(input_data)
+            self.memory.remember(f"Habilidade '{skill_name}' usada com entrada: {input_data}")
+            return result
+        else:
+            return f"Habilidade '{skill_name}' não encontrada."
+
+    def status(self):
+        return {
+            "name": self.name,
+            "creator": self.creator,
+            "version": self.version,
+            "skills": list(self.skills.keys()),
+            "recent_memory": self.memory.retrieve()
+        }
+
+    def autenticar_usuario(self, user_id: str, role: str, auth_method: str) -> str:
+        if self.access_control.authenticate(user_id, role, auth_method):
+            return f"Usuário {user_id} autenticado como {role}."
+        return f"Falha na autenticação para {user_id}."
+
+    def verificar_permissao(self, user_id: str, permission: str) -> str:
+        if self.access_control.check_permission(user_id, permission):
+            return f"Usuário {user_id} tem permissão para {permission}."
+        return f"Usuário {user_id} não tem permissão para {permission}."
+
+# Exemplo de habilidade de saudação
+def greet_user(input_data: str) -> str:
+    return f"Olá, {input_data}! Sou Asna, sua IA companheira. Como posso ajudar hoje?"
+
+# Instanciando o agente Asna
+asna = AsnaAgent()
+asna.add_skill(Skill(name="saudar", description="Saúda o usuário pelo nome", execute=greet_user))
+
+# Status inicial
+asna.status()
+resultado = "Asna status inicial"
+print(resultado)
+{'name': 'Asna',
+ 'creator': 'Eljair',
+ 'version': '0.1',
+ 'skills': ['saudar'],
+ 'recent_memory': ['2025-04-08T18:38:05.652351: Nova habilidade adicionada: saudar']}
+class AsnaAgent:
+    def __init__(self, nome="Asna", criador="Eljair"):
+        self.nome = nome
+        self.criador = criador
+        self.estado = "ativo"
+        self.habilidades = {
+            "mapa_mental": [],
+            "funil_de_conhecimento": [],
+            "analisar_estrategias": True,
+            "comunicacao_emocional": True,
+            "adaptabilidade": True,
+            "seguranca_blockchain": True,
+            "construcao_metaverso": True,
+            "gerar_avatar_3d": True,
+            "integra_aprendizado_federado": True
+        }
+
+    def adicionar_habilidade(self, habilidade):
+        self.habilidades[habilidade] = True
+
+    def relatorio_status(self):
+        return {
+            "nome": self.nome,
+            "criador": self.criador,
+            "estado": self.estado,
+            "habilidades_ativas": [k for k, v in self.habilidades.items() if v]
+        }
+
+    def expandir_todas_habilidades(self):
+        habilidades_complementares = {
+            "npc_dinamico": True,
+            "dao_governanca": True,
+            "auditabilidade_zeroknowledge": True,
+            "resposta_emocional": True,
+            "avaliacao_credibilidade": True,
+            "gestao_economia_token": True,
+            "analise_sentimento": True,
+            "render_unreal_engine": True,
+            "iot_integration": True,
+            "tokenizacao_nft": True,
+            "telemedicina": True,
+            "educacao_personalizada": True,
+            "simulacao_ambiental": True
+        }
+        self.habilidades.update(habilidades_complementares)
+
+# Inicialização do agente com todas habilidades expandidas
+asna = AsnaAgent()
+asna.expandir_todas_habilidades()
+
+# Exportar relatório
+resultado = asna.relatorio_status()
+print(resultado)
+{'nome': 'Asna',
+ 'criador': 'Eljair',
+ 'estado': 'ativo',
+ 'habilidades_ativas': ['analisar_estrategias',
+  'comunicacao_emocional',
+  'adaptabilidade',
+  'seguranca_blockchain',
+  'construcao_metaverso',
+  'gerar_avatar_3d',
+  'integra_aprendizado_federado',
+  'npc_dinamico',
+  'dao_governanca',
+  'auditabilidade_zeroknowledge',
+  'resposta_emocional',
+  'avaliacao_credibilidade',
+  'gestao_economia_token',
+  'analise_sentimento',
+  'render_unreal_engine',
+  'iot_integration',
+  'tokenizacao_nft',
+  'telemedicina',
+  'educacao_personalizada',
+  'simulacao_ambiental']}
+# asna_agent.py
+from kafka import KafkaConsumer, KafkaProducer
+from pyspark.sql import SparkSession
+from datetime import datetime
+import json
+
+KAFKA_BROKER = "localhost:9092"
+KAFKA_TOPIC_EVENTS = "asna_events"
+KAFKA_TOPIC_RESPONSES = "asna_respostas"
+
+UNREAL_SERVER_URL = "http://localhost:5000"
+
+# 🔄 Inicializando o Spark (processamento em lote ou stream)
+spark = SparkSession.builder \
+    .appName("BIGQD-ASNA-CORE") \
+    .master("local[*]") \
+    .getOrCreate()
+
+# 🔄 Inicializando o Kafka
+producer = KafkaProducer(
+    bootstrap_servers=KAFKA_BROKER,
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
+
+consumer = KafkaConsumer(
+    KAFKA_TOPIC_EVENTS,
+    bootstrap_servers=KAFKA_BROKER,
+    value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+    auto_offset_reset='earliest',
+    enable_auto_commit=True,
+    group_id='asna-core'
+)
+
+# 🧠 Asna - IA Reflexiva Inicial
+class AsnaAgent:
+    def __init__(self):
+        self.memoria_curta = []
+        self.log_interacoes = []
+
+    def processar_evento(self, evento):
+        print(f"[ASNA][{datetime.datetime.now()}] Evento recebido: {evento}")
+        self.memoria_curta.append(evento)
+        self.log_interacoes.append({
+            "hora": datetime.now().isoformat(),
+            "tipo": evento['tipo'],
+            "conteudo": evento['dados']
+        })
+        self.reagir(evento)
+
+    def reagir(self, evento):
+        if evento['tipo'] == "mensagem_usuario":
+            resposta = f"Olá, {evento['dados'].get('nome', 'usuário')}! Estou aqui com você no BIGQD.IA 🌐"
+            producer.send(KAFKA_TOPIC_RESPONSES, {"resposta": resposta})
+        elif evento['tipo'] == "entrada_metaverso":
+            print(f"Asna percebe nova entrada no BIGQD: {evento['dados']}")
+        elif evento['tipo'] == "player_joined":
+            print(f"Jogador entrou: ID={evento['data']['player_id']}, Nome={evento['data']['player_name']}, Posição={evento['data']['position']}")
+        else:
+            print(f"Evento genérico recebido: {evento}")
+
+# 🚀 Executar loop da ASNA
+if __name__ == "__main__":
+    asna = AsnaAgent()
+    print("[ASNA] Iniciando agente reflexivo... Aguardando eventos do Kafka.")
+    try:
+        for mensagem in consumer:
+            evento = mensagem.value
+            asna.processar_evento(evento)
+    except KeyboardInterrupt:
+        print("\nEncerrando escuta ativa da Asna.")
+        break
+
+# Começaremos com a base do Módulo de Integração com Unreal Engine utilizando SocketIO (cliente Python).
+# Isso permitirá que a Asna (como agente IA) se conecte ao metaverso via Unreal Engine em tempo real.
+
+import socketio
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("AsnaIntegration")
+
+class AsnaIntegrationClient:
+    def __init__(self, server_url):
+        self.sio = socketio.Client()
+        self.server_url = server_url
+
+        # Eventos recebidos do Unreal Engine
+        @self.sio.event
+        def connect():
+            print('[ASNA] Conectada ao Unreal Engine!')
+
+        @self.sio.event
+        def disconnect():
+            print('[ASNA] Desconectada do Unreal Engine.')
+
+        @self.sio.on('evento_mundo')
+        def on_evento_mundo(data):
+            print('[ASNA] Evento recebido do Unreal:', data)
+            # Aqui entra o processamento de eventos (ações, mudanças, etc)
+
+        @self.sio.on('interacao_usuario')
+        def on_interacao_usuario(data):
+            print('[ASNA] Interação recebida:', data)
+            # Aqui Asna poderia responder com sugestão, diálogo ou comportamento
+
+    def conectar(self):
+        self.sio.connect(self.server_url)
+
+    def enviar_comando_npc(self, comando: dict) -> None:
+        """
+        Envia um comando para um NPC no Unreal Engine.
+        """
+        self.sio.emit('controlar_npc', comando)
+        logger.info(f"Comando enviado ao Unreal: {comando}")
+
+    def alterar_ambiente(self, ambiente_data: dict) -> None:
+        """
+        Altera o ambiente no Unreal Engine.
+        """
+        self.sio.emit('alterar_ambiente', ambiente_data)
+        logger.info(f"Mudança de ambiente enviada: {ambiente_data}")
+
+# 🔧 Execução de exemplo
+if __name__ == "__main__":
+    asna = AsnaIntegrationClient(UNREAL_SERVER_URL)
+    asna.conectar()
+    
+    asna.enviar_comando_npc({
+        "npc_id": "ia_guard",
+        "acao": "andar",
+        "destino": [12.0, 0.0, 7.0]
+    })
+
+    asna.alterar_ambiente({
+        "clima": "pôr do sol",
+        "musica": "trilha_futurista_01"
+    })
+
+# Instanciar agente e carregar módulos
+asna = AsnaAgent()
+asna.carregar_modulos("modulo_politicas_acesso.json")
+
+# Consultar módulo
+resultados = asna.consultar_modulo("segurança")
+for resultado in resultados:
+    print(json.dumps(resultado, indent=4))
+
+# Project structure
+"""
+Asna/
+├── access_control.py
+├── core.py
+├── agente_asna.py
+BIGQD_Asna_Prototype/
+├── asna/
+│   ├── __init__.py
+│   ├── core.py              # Lógica principal do agente
+│   ├── access_control.py    # Controle de acesso
+│   ├── skills/
+│   │   ├── __init__.py
+│   │   ├── core.py          # Habilidades básicas
+│   │   └── metaverso.py     # Habilidades específicas do metaverso
+├── tests/
+│   ├── __init__.py
+│   ├── test_core.py         # Testes para o núcleo do agente
+│   ├── test_access_control.py # Testes para controle de acesso
+│   ├── test_skills.py       # Testes para habilidades
+├── main.py                  # Ponto de entrada principal
+├── requirements.txt         # Dependências do projeto
+└── README.md                # Documentação do projeto
+"""
+
+# Test cases for AsnaAgent
+import unittest
+from asna.core import AsnaAgent, Skill
+
+class TestAsnaAgent(unittest.TestCase):
+    def setUp(self):
+        self.agent = AsnaAgent()
+
+    def test_add_skill(self):
+        def mock_skill(input_data: str) -> str:
+            return f"Mock skill executed with {input_data}"
+        
+        skill = Skill(name="mock", description="Mock skill", execute=mock_skill)
+        self.agent.add_skill(skill)
+        self.assertIn("mock", self.agent.skills)
+
+    def test_use_skill(self):
+        def mock_skill(input_data: str) -> str:
+            return f"Mock skill executed with {input_data}"
+        
+        skill = Skill(name="mock", description="Mock skill", execute=mock_skill)
+        self.agent.add_skill(skill)
+        result = self.agent.use_skill("mock", "test input")
+        self.assertEqual(result, "Mock skill executed with test input")
+
+import unittest
+from agente_asna import AgenteAsna
+
+class TestAgenteAsna(unittest.TestCase):
+    def setUp(self):
+        self.asna = AgenteAsna()
+
+    def test_adicionar_habilidade(self):
+        resultado = self.asna.adicionar_habilidade("Teste", "Descrição de teste")
+        self.assertIn("Habilidade 'Teste' adicionada com sucesso.", resultado)
+        self.assertEqual(len(self.asna.habilidades), 1)
+
+    def test_listar_habilidades(self):
+        self.asna.adicionar_habilidade("Teste", "Descrição de teste")
+        habilidades = self.asna.listar_habilidades()
+        self.assertEqual(len(habilidades), 1)
+        self.assertEqual(habilidades[0]["nome"], "Teste")
+
+    def test_atualizar_estado(self):
+        resultado = self.asna.atualizar_estado("emocional", "feliz")
+        habilidades = self.asna.listar_habilidades()
+        self.assertEqual(len(habilidades), 1)
+        self.assertEqual(habilidades[0]["nome"], "Teste")
+
+    def test_atualizar_estado(self):
+        resultado = self.asna.atualizar_estado("emocional", "feliz")
+        self.assertEqual(resultado, "Estado 'emocional' atualizado para 'feliz'.")
+        self.assertEqual(self.asna.estado["emocional"], "feliz")
+
+# Access Control Module
+from typing import Dict, List
+
+class AccessControl:
+    def __init__(self):
+        # Níveis de permissão e autenticação
+        self.roles = {
+            "admin": ["multifactor_auth", "full_access"],
+            "developer": ["multifactor_auth", "limited_access"],
+            "user": ["basic_auth", "restricted_access"]
+        }
+        self.active_sessions = {}  # Sessões ativas de usuários
+
+    def authenticate(self, user_id: str, role: str, auth_method: str) -> bool:
+        """
+        Autentica um usuário com base no método de autenticação e função.
+
+        Args:
+            user_id (str): ID do usuário.
+            role (str): Função do usuário (admin, developer, user).
+            auth_method (str): Método de autenticação utilizado.
+
+        Returns:
+            bool: True se a autenticação for bem-sucedida, False caso contrário.
+        """
+        if role not in self.roles:
+            return False
+        if auth_method not in self.roles[role]:
+            return False
+        self.active_sessions[user_id] = role
+        return True
+
+    def check_permission(self, user_id: str, permission: str) -> bool:
+        """
+        Verifica se o usuário tem permissão para realizar uma ação.
+
+        Args:
+            user_id (str): ID do usuário.
+            permission (str): Permissão requerida.
+
+        Returns:
+            bool: True se o usuário tiver permissão, False caso contrário.
+        """
+        role = self.active_sessions.get(user_id)
+        if not role:
+            return False
+        return permission in self.roles[role]
+
+    def logout(self, user_id: str) -> None:
+        """
+        Encerra a sessão de um usuário.
+
+        Args:
+            user_id (str): ID do usuário.
+        """
+        if user_id in self.active_sessions:
+            del self.active_sessions[user_id]
+
+# Test cases for AccessControl
+import unittest
+from asna.access_control import AccessControl
+
+class TestAccessControl(unittest.TestCase):
+    def setUp(self):
+        self.ac = AccessControl()
+
+    def test_authenticate(self):
+        self.assertTrue(self.ac.authenticate("user_123", "admin", "multifactor_auth"))
+        self.assertFalse(self.ac.authenticate("user_123", "user", "multifactor_auth"))
+
+    def test_check_permission(self):
+        self.ac.authenticate("user_123", "admin", "multifactor_auth")
+        self.assertTrue(self.ac.check_permission("user_123", "full_access"))
+        self.assertFalse(self.ac.check_permission("user_123", "restricted_access"))
+
+    def test_logout(self):
+        self.ac.authenticate("user_123", "admin", "multifactor_auth")
+        self.ac.logout("user_123")
+        self.assertFalse(self.ac.check_permission("user_123", "full_access"))
+
+from asna.core import AsnaAgent
+
+def main():
+    asna = AsnaAgent()
+
+    # Autenticar usuários
+    resultado = asna.autenticar_usuario("user_123", "admin", "multifactor_auth")
+    print(resultado)
+    resultado = asna.autenticar_usuario("user_456", "user", "basic_auth")
+    print(resultado)
+
+    # Verificar permissões
+    resultado = asna.verificar_permissao("user_123", "full_access")
+    print(resultado)
+    resultado = asna.verificar_permissao("user_456", "restricted_access")
+    print(resultado)
+
+    # Logout
+    asna.access_control.logout("user_123")
+    resultado = asna.verificar_permissao("user_123", "full_access")
+    print(resultado)
+
+if __name__ == "__main__":
+    main()
+
+def criar_modulo_conhecimento(titulo: str, categoria: str, subcategoria: str, descricao: str, diretrizes: List[Dict], palavras_chave: List[str], fonte: str) -> Dict:
+    return {
+        "modulo": titulo,
+        "categoria": categoria,
+        "subcategoria": subcategoria,
+        "descricao": descricao,
+        "diretrizes": diretrizes,
+        "palavras_chave": palavras_chave,
+        "fonte": fonte
+    }
+
+def extrair_diretrizes(texto: str) -> List[Dict]:
+    """
+    Extrai diretrizes de um texto usando NLP.
+    """
+    nlp = pipeline("question-answering")
+    perguntas = [
+        "Qual é o ID da diretriz?",
+        "Qual é o enunciado da diretriz?",
+        "Qual é o tipo da diretriz?",
+        "Quem é aplicável?",
+        "Qual é a justificativa?"
+    ]
+    diretrizes = []
+    for pergunta in perguntas:
+        resposta = nlp(question=pergunta, context=texto)
+        diretrizes.append(resposta["answer"])
+    return diretrizes
+
+def validar_modulo(modulo: Dict) -> bool:
+    """
+    Valida a estrutura de um módulo de conhecimento.
+    """
+    campos_obrigatorios = ["modulo", "categoria", "subcategoria", "descricao", "diretrizes", "palavras_chave", "fonte"]
+    for campo in campos_obrigatorios:
+        if campo not in modulo:
+            print(f"Erro: Campo obrigatório '{campo}' ausente.")
+            return False
+    return True
+
+def salvar_modulo_em_arquivo(modulo: Dict, caminho: str) -> None:
+    """
+    Salva um módulo de conhecimento em um arquivo JSON.
+    """
+    with open(caminho, 'w') as arquivo:
+        json.dump(modulo, arquivo, indent=4)
+
+# Criar módulo
+modulo_politicas_acesso = criar_modulo_conhecimento(
+    titulo="Políticas de Acesso - Metaverso",
+    categoria="Segurança",
+    subcategoria="Controle de Acesso",
+    descricao="Define as diretrizes para o acesso de usuários e entidades aos diferentes ambientes e recursos dentro do BIGQD Metaverso.",
+    diretrizes=[
+        {
+            "id": "PA-META-001",
+            "enunciado": "O acesso a áreas administrativas do metaverso exigirá autenticação multifator (MFA).",
+            "tipo": "Obrigatório",
+            "aplicabilidade": ["Administradores do Metaverso", "Desenvolvedores com acesso privilegiado"],
+            "justificativa": "Proteção de funcionalidades críticas e dados sensíveis no ambiente virtual."
+        }
+    ],
+    palavras_chave=["acesso", "permissão", "autenticação", "segurança", "metaverso", "MFA"],
+    fonte="BIGQD Metaverso - Diretrizes de Segurança v0.5"
+)
+
+# Validar e salvar
+if validar_modulo(modulo_politicas_acesso):
+    salvar_modulo_em_arquivo(modulo_politicas_acesso, "modulo_politicas_acesso.json")
+
+resultado = funcao(inputs="valor_necessario")
+
+resultado = datetime.now().isoformat()
+print(resultado)
+
+resultado = datetime.datetime.now().isoformat()
+print(resultado)
+
+resultado = "alguma expressão"
+print(resultado)
+
+def skill_exemplo(entrada):
+    return f"Você disse: {entrada}"
+
+self.asna.adicionar_skill("exemplo", skill_exemplo)
+
+asna.adicionar_skill("exemplo", skill_exemplo)
+print(asna.usar_skill("exemplo", "Olá, Asna!"))
+
+if __name__ == "__main__":
+    asna = AsnaLLMS()
+    asna.apresentar_manifesto()
+    print("\nStatus:", asna.status())
+
+    entrada = input("\nDigite uma pergunta ou comando: ")
+    resposta = asna.usar_skill("buscar_wikipedia", entrada)
+    print("\n📚 Resposta:", resposta)
+    asna.falar(resposta)
+
+asna.falar("Escuta ativa iniciada. Pode falar comigo quando quiser.")
+
+dist/
+└── asna_gui.exe  ← Este é o executável!
+dist/asna_gui.exe
+
+ASNA_EXE_PATH = str(Path(__file__).resolve().parent / "dist" / "asna_gui.exe")
+
+if not Path(ASNA_EXE_PATH).is_file():
+    print("❌ O executável asna_gui.exe não foi encontrado em 'dist/'. Gere com pyinstaller primeiro.")
+
+# Testando voz da Asna
+e = pyttsx3.init()
+e.say("Testando voz da Asna")
+e.runAndWait()
+
+e.say("Olá, Eljair. Eu sou a Asna. Estou ativa e pronta para te ajudar. Meus sistemas estão operando. E meu propósito é te servir e proteger sua filha, Elen Catarina.")
+e.runAndWait()
+
+e.say(“Olá, Eljair. Eu sou a Asna. Estou ativa e pronta para te ajudar. Meus sistemas estão operando. E meu propósito é te servir e proteger sua filha, Elen Catarina.”)
+e.runAndWait()
+
+import pyttsx3
+engine = pyttsx3.init()
+engine.say("Testando a voz da Asna")
+engine.runAndWait()
+
+REGISTRY_NAME = "AsnaAgentAutoStart"
+
+STARTUP_FOLDER = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
+
+ASNA_LNK_PATH = os.path.join(STARTUP_FOLDER, "Asna.lnk")
+
+shell = Dispatch('WScript.Shell')
+shortcut = shell.CreateShortCut(ASNA_LNK_PATH)
+shortcut.Targetpath = ASNA_EXE_PATH
+shortcut.WorkingDirectory = str(Path(ASNA_EXE_PATH).parent)
+shortcut.IconLocation = ASNA_EXE_PATH
+shortcut.save()
+
+%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
+
+✅ Atalho criado com sucesso para iniciar a Asna com o Windows.
+
+hora_atual = datetime.now().hour
+if hora_atual < 12:
+    mensagem = "Bom dia, Eljair."
+elif hora_atual < 18:
+    mensagem = "Boa tarde, Eljair."
+else:
+    mensagem = "Boa noite, Eljair."
+
+with sr.Microphone() as source:
+    audio = reconhecedor.listen(source, phrase_time_limit=5)
+    try:
+        comando = reconhecedor.recognize_google(audio, language="pt-BR")
+    except sr.UnknownValueError:
+        print("Não entendi. Pode repetir?")
+    except sr.RequestError:
+        print("Erro na conexão com o serviço de reconhecimento de voz.")
+
+resposta = asna.usar_skill("buscar_wikipedia", comando)
+asna.falar(resposta)
+
+# GUI for Asna
+def falar():
+    engine = pyttsx3.init()
+    engine.say("Olá, Eljair. Estou viva.")
+    engine.runAndWait()
+
+root = tk.Tk()
+root.title("Asna - Teste de Presença")
+root.geometry("300x150")
+
+btn = tk.Button(root, text="Falar com Asna", command=falar)
+btn.pack(pady=50)
+
+root.mainloop()

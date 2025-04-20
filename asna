@@ -1,16 +1,82 @@
 Asna/
-├── access_control.py       # Módulo de controle de acesso
-├── core.py                 # Lógica principal do agente
-├── agente_asna.py          # Código relacionado ao agente Asna
-├── skills/
-│   ├── __init__.py         # Inicialização do módulo de habilidades
-│   ├── core.py             # Habilidades básicas
-│   └── metaverso.py        # Habilidades específicas do metaverso
+├── main.py                      # Ponto de entrada para rodar a IA
+├── requirements.txt             # Instala todas as dependências
+├── README_instalacao.txt        # Instruções para rodar tudo com sucesso
+├── .vscode/
+│   └── settings.json            # Configurações para rodar bem no VSCode
+
+# Núcleo Inteligente
+├── core/
+│   ├── __init__.py
+│   ├── asna_llms.py             # Cérebro da IA (fala, responde, aprende)
+│   └── funil_conhecimento.py    # Busca + resumir + indexar conhecimento
+
+# Interface Visual
+├── interface/
+│   └── asna_gui.py              # Tela interativa com entrada de texto e voz
+
+# Escuta Ativa por Voz
+├── escuta/
+│   └── asna_escuta_ativa.py     # Escuta contínua (diga "Asna")
+
+# Início Automático com Fala
+├── startup/
+│   └── asna_autostart.py        # Coloca o app para iniciar com o Windows
+
+# Base de Conhecimento
+├── data/
+│   └── knowledge_index.json     # Tudo que a Asna aprendeu
+
+# Visual e Ícones
+├── assets/
+│   └── asna.ico                 # Ícone da IA
+
+# Testes e Diagnóstico
 ├── tests/
-│   ├── test_AsnaAgent.py   # Testes unitários para AsnaAgent
-│   └── test_AccessControl.py # Testes unitários para AccessControl
-└── main.py                 # Ponto de entrada principal
+│   └── test_llms.py             # Testes da IA
+
+# Prompt e Missão
+├── prompt.txt                   # Manifesto de criação da Asna
 
 {
-  "python.analysis.extraPaths": ["./"]
+  "python.analysis.extraPaths": [
+    "./core",
+    "./interface",
+    "./escuta",
+    "./startup"
+  ],
+  "python.defaultInterpreterPath": "C:\\Users\\User\\Asna\\venv\\Scripts\\python.exe",
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder}"
+  }
 }
+
+import pyttsx3
+import speech_recognition as sr
+
+# Teste de voz
+engine = pyttsx3.init()
+engine.say("Testando voz da Asna")
+engine.runAndWait()
+
+# Teste de microfone
+reconhecedor = sr.Recognizer()
+with sr.Microphone() as source:
+    print("Fale algo...")
+    audio = reconhecedor.listen(source)
+    try:
+        texto = reconhecedor.recognize_google(audio, language="pt-BR")
+        print(f"Você disse: {texto}")
+    except sr.UnknownValueError:
+        print("Não entendi o que você disse.")
+    except sr.RequestError:
+        print("Erro ao acessar o serviço de reconhecimento de voz.")
+
+pyttsx3
+speechrecognition
+transformers
+torch
+requests
+bs4
+pyaudio
+pywin32

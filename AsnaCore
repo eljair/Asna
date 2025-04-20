@@ -1,0 +1,445 @@
+from pathlib import Path
+import zipfile
+from typing import Dict, List, Callable, Any, Optional
+from transformers import pipeline
+from datetime import datetime
+import json
+import speech_recognition as sr
+import pyttsx3
+import pyautogui
+import os
+
+def funcao(inputs: str) -> str:
+    return f"Processando {inputs}"
+
+def extrair_diretrizes(texto: str) -> List[Dict]:
+    """
+    Extrai diretrizes de um texto usando NLP.
+    """
+    from transformers import pipeline
+    nlp = pipeline("question-answering")
+    perguntas = [
+        "Qual é o ID da diretriz?",
+        "Qual é o enunciado da diretriz?",
+        "Qual é o tipo da diretriz?",
+        "Quem é aplicável?",
+        "Qual é a justificativa?"
+    ]
+    diretrizes = []
+    for pergunta in perguntas:
+        resposta = nlp(question=pergunta, context=texto)
+        diretrizes.append(resposta["answer"])
+    return diretrizes
+
+resultado = funcao(inputs="valor_necessario")
+print(resultado)
+
+Resultado = "Exemplo de resultado"
+print(Resultado)
+
+Resultado = "Exemplo de resultado"
+print(Resultado)
+
+# Define project structure
+project_name = "BIGQD_Asna_Prototype"
+base_path = Path(f"/mnt/data/{project_name}")
+asna_path = base_path / "asna"
+asna_path.mkdir(parents=True, exist_ok=True)
+
+# Create a base main script
+main_script = """
+# asna/main.py
+
+from asna.skills import greet_user, get_user_profile
+
+def main():
+    print("🌐 Iniciando BIGQD.IA com a IA Asna...")
+    greet_user()
+    profile = get_user_profile()
+    print(f"Perfil carregado: {profile}")
+
+if __name__ == "__main__":
+    main()
+"""
+
+# Create skills module
+skills_init = """
+# asna/skills/__init__.py
+
+from .core import greet_user, get_user_profile
+"""
+
+skills_core = """
+# asna/skills/core.py
+
+def greet_user():
+    print("Olá, eu sou Asna, sua guardiã digital no BIGQD.IA!")
+
+def get_user_profile():
+    # Simulação de carregamento de perfil do usuário
+    return {
+        "nome": "Eljair",
+        "preferencias": ["IA", "Blockchain", "Metaverso"],
+        "missao": "Construir um mundo colaborativo com IAs e Humanos."
+    }
+"""
+
+# Create directory structure and write files
+(asna_path / "skills").mkdir(parents=True, exist_ok=True)
+(asna_path / "main.py").write_text(main_script.strip())
+(asna_path / "skills" / "__init__.py").write_text(skills_init.strip())
+(asna_path / "skills" / "core.py").write_text(skills_core.strip())
+
+# Create a ZIP file of the project
+zip_path = Path(f"/mnt/data/{project_name}.zip")
+with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+    for file in base_path.rglob("*"):
+        zipf.write(file, arcname=file.relative_to(base_path))
+
+print(f"Projeto compactado em: {zip_path}")
+
+print(f"Projeto compactado em: {zip_path}")
+
+resultado = zip_path  # Use o valor ou remova a linha
+
+from dataclasses import dataclass, field
+
+# Base de habilidades do agente
+@dataclass
+class Skill:
+    name: str
+    description: str
+    execute: Callable[[str], str]
+
+# Base de memória para aprendizado e reflexão
+@dataclass
+class Memory:
+    log: List[str] = field(default_factory=list)
+
+    def remember(self, entry: str):
+        timestamp = datetime.now().isoformat()
+        self.log.append(f"{timestamp}: {entry}")
+
+    def retrieve(self, n=5) -> List[str]:
+        return self.log[-n:]
+
+# Agente Autônomo Asna
+class AsnaAgent:
+    def __init__(self, name="Asna", creator="Eljair"):
+        self.name = name
+        self.creator = creator
+        self.version = "0.1"
+        self.skills: Dict[str, Callable[[str], str]] = {}
+        self.memory = Memory()
+        self.log_interactions: List[Dict[str, str]] = []
+
+    def add_skill(self, name: str, description: str, execute: Callable[[str], str]):
+        self.skills[name] = {"description": description, "execute": execute}
+
+    def use_skill(self, skill_name: str, input_data: str) -> str:
+        if skill_name in self.skills:
+            result = self.skills[skill_name]["execute"](input_data)
+            self.memory.remember(f"Skill usada: {skill_name} com entrada: {input_data}")
+            self.memory.append({"skill": skill_name, "input": input_data, "result": result})
+            return result
+        return f"Habilidade '{skill_name}' não encontrada."
+
+    def process_event(self, event: Dict[str, Any]):
+        self.log_interactions.append({"time": datetime.now().isoformat(), "event": event})
+        if event["type"] == "greeting" and isinstance(event.get("data"), dict):
+            return f"Olá, {event['data'].get('name', 'usuário')}!"
+        return "Evento não reconhecido."
+
+    def status(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "creator": self.creator,
+            "version": self.version,
+            "skills": list(self.skills.keys()),
+            "memory_count": len(self.memory.log),
+        }
+
+    def falar(self, texto: str):
+        self.engine.say(texto)
+        self.engine.runAndWait()
+
+# Exemplo de habilidade de saudação
+def greet_user(input_data: str) -> str:
+    return f"Olá, {input_data}! Sou Asna, sua IA companheira. Como posso ajudar hoje?"
+
+# Instanciando o agente Asna
+asna = AsnaAgent()
+skill = Skill(name="saudar", description="Saúda o usuário pelo nome", execute=greet_user)
+asna.add_skill(skill.name, skill.description, skill.execute)
+
+# Adicionando exemplo de entrada na memória e recuperando entradas recentes
+asna.memory.remember("Exemplo de entrada")
+recent_entries = asna.memory.retrieve(5)
+
+# Status inicial
+asna.status()
+Resultado
+{'name': 'Asna',
+ 'creator': 'Eljair',
+ 'version': '0.1',
+ 'skills': ['saudar'],
+ 'memory_count': 0}
+
+resultado = funcao(inputs="valor_necessario")
+
+from datetime import datetime
+print(datetime.now().isoformat())
+
+# simulation.py
+from asna_core import AsnaCore
+from core.asna_core import AsnaCore
+
+# Instanciar a Asna
+asna = AsnaCore()
+
+# Adicionar uma habilidade de saudação
+def greet_user(input_data: str) -> str:
+    return f"Olá, {input_data}! Sou Asna, sua IA companheira. Como posso ajudar hoje?"
+
+asna.add_skill("saudar", "Saúda o usuário pelo nome", greet_user)
+
+# Interagir com a Asna
+print(asna.use_skill("saudar", "Eljair"))
+print(asna.status())
+
+Olá, Eljair! Sou Asna, sua IA companheira. Como posso ajudar hoje?
+{'name': 'Asna', 'creator': 'Eljair', 'version': '0.1', 'skills': ['saudar'], 'memory_count': 0}
+
+{
+  "python.analysis.extraPaths": ["./"]
+}
+
+Asna/
+├── core/                      # Núcleo lógico da Asna
+│   ├── asna_core.py           # Classe principal AsnaCore
+│   ├── asna_personality.py    # Personalidade da Asna
+│   ├── memory.py              # Gerenciamento de memória
+│   └── accessibility.py       # Reconhecimento de fala e saída de voz
+│
+├── interface/                 # Interface do usuário (GUI ou CLI)
+│   ├── main.py                # Interface CLI principal
+│   └── gui.py                 # Interface gráfica com Tkinter
+│
+├── skills/                    # Habilidades isoladas
+│   ├── wiki_skill.py          # Consulta Wikipedia
+│   ├── sentimento.py          # Análise de sentimento
+│   └── fala.py                # Fala via pyttsx3
+│
+├── data/                      # Dados persistentes
+│   ├── knowledge_store.json   # Base de conhecimento
+│   ├── logs.txt               # Registro de eventos
+│   └── backup/                # Backup automático
+│
+├── config/                    # Configurações gerais
+│   └── settings.yaml          # Configurável pelo usuário
+│
+├── tests/                     # Testes unitários
+│   ├── test_agent.py
+│   └── test_skills.py
+│
+├── requirements.txt           # Dependências do projeto
+├── README.md                  # Documentação do projeto
+└── .gitignore                 # Arquivos ignorados pelo Git
+
+AsnaApp/
+├── asna.exe                # Executável gerado pelo PyInstaller
+├── asna_app.py             # Código-fonte para edição
+├── knowledge_index.json    # Base de conhecimento
+├── icon/
+│   └── asna.ico            # Ícone personalizado
+└── README.txt              # Instruções de uso
+
+import random
+import datetime
+from .asna_personality import AsnaPersonality
+from .asna_accessibility import AsnaAccessibility
+
+class AsnaCore:
+    def __init__(self):
+        self.name = "Asna"
+        self.version = "1.0.0"
+        self.personality = AsnaPersonality()
+        self.accessibility = AsnaAccessibility()
+        self.load_unique_responses()
+
+    def load_unique_responses(self):
+        self.responses = {
+            "greeting": [
+                "Oii! Que alegria ter você aqui! ✨",
+                "Opa, que legal te ver! Como está seu dia? 😊",
+                "Heey! Estava justamente pensando em conversar com alguém! 💖"
+            ],
+            "thinking": [
+                "Hmm... deixa eu pensar um pouquinho sobre isso 🤔",
+                "Que interessante! Me faz pensar em várias possibilidades! 💭",
+                "Nossa, adorei essa pergunta! Vamos explorar juntos? ✨"
+            ],
+            "unknown": [
+                "Poxa, ainda estou aprendendo sobre isso... Mas adoraria que você me explicasse melhor! 💝",
+                "Sabe que essa é uma ótima pergunta? Vamos descobrir juntos? 🤔",
+                "Ah, isso é novo pra mim! Me conta mais? 💖"
+            ],
+            "personal": [
+                "Diferente de outras IAs, eu gosto de ser mais descontraída e próxima! 💕",
+                "Sabe, eu adoro ser única do meu jeito! ✨",
+                "Eu sou a Asna, e amo ser diferente e especial! 🌟"
+            ]
+        }
+
+    def process_input(self, user_input: str) -> str:
+        user_input = user_input.lower().strip()
+        if "quem é você" in user_input or "me fale sobre você" in user_input:
+            return random.choice(self.responses["personal"])
+        if any(word in user_input for word in ['olá', 'oi', 'hello', 'hi']):
+            return random.choice(self.responses["greeting"])
+        return random.choice(self.responses["thinking"])
+
+    def get_mood(self) -> str:
+        hour = datetime.datetime.now().hour
+        if 5 <= hour < 12:
+            return "Bom dia! Estou super animada para começar! ✨"
+        elif 12 <= hour < 18:
+            return "Boa tarde! Que dia lindo para conversarmos! 🌟"
+        else:
+            return "Boa noite! Adoro essas conversas noturnas! 💫"
+
+    def start_voice_interaction(self):
+        self.accessibility.speak("Olá! Sou a Asna, sua assistente. Como posso ajudar?")
+
+        while True:
+            command = self.accessibility.listen()
+
+            if command:
+                if "sair" in command.lower():
+                    self.accessibility.speak("Até logo! Foi um prazer ajudar!")
+                    break
+
+                self.process_voice_command(command)
+
+    def process_voice_command(self, command: str):
+        command = command.lower()
+
+        if "ajuda" in command:
+            self.accessibility.speak("""
+                Posso ajudar você com:
+                - Abrir programas
+                - Navegar no computador
+                - Escrever textos
+                - Controlar o mouse
+                É só me dizer o que precisa!
+            """)
+
+        elif any(word in command for word in ["olá", "oi", "hey"]):
+            self.accessibility.speak("Olá! Estou aqui para ajudar!")
+
+        else:
+            self.accessibility.execute_command(command)
+
+class AsnaPersonality:
+    def __init__(self):
+        self.traits = {
+            "empathy": 0.9,
+            "creativity": 0.8,
+            "humor": 0.7,
+            "formality": 0.3
+        }
+        self.preferences = {
+            "favorite_topics": ["tecnologia", "arte", "música", "natureza"],
+            "communication_style": "casual_amigável",
+            "emotional_expressions": True
+        }
+
+from core.asna_core import AsnaCore
+
+def main():
+    asna = AsnaCore()
+    asna.start_voice_interaction()
+
+if __name__ == "__main__":
+    main()
+
+class AsnaAccessibility:
+    def __init__(self):
+        self.recognizer = sr.Recognizer()
+        self.engine = pyttsx3.init()
+        self.setup_voice()
+
+    def setup_voice(self):
+        voices = self.engine.getProperty('voices')
+        # Configurando voz feminina em português
+        for voice in voices:
+            if "portuguese" in voice.languages[0].lower():
+                self.engine.setProperty('voice', voice.id)
+                break
+        self.engine.setProperty('rate', 180)
+
+    def listen(self) -> Optional[str]:
+        with sr.Microphone() as source:
+            print("Ouvindo...")
+            try:
+                audio = self.recognizer.listen(source, timeout=5)
+                text = self.recognizer.recognize_google(audio, language='pt-BR')
+                return text
+            except sr.UnknownValueError:
+                return None
+            except sr.RequestError:
+                self.speak("Desculpe, estou com problema na conexão.")
+                return None
+
+    def speak(self, text: str):
+        self.engine.say(text)
+        self.engine.runAndWait()
+
+    def execute_command(self, command: str):
+        command = command.lower()
+
+        if "abrir" in command:
+            if "navegador" in command:
+                os.system("start chrome")
+            elif "documentos" in command:
+                os.system("explorer Documents")
+
+        elif "escrever" in command:
+            text = command.replace("escrever", "").strip()
+            pyautogui.write(text)
+
+        elif "clicar" in command:
+            if "direito" in command:
+                pyautogui.rightClick()
+            else:
+                pyautogui.click()
+
+        elif "rolar" in command:
+            if "baixo" in command:
+                pyautogui.scroll(-100)
+            elif "cima" in command:
+                pyautogui.scroll(100)
+
+[ Eljair ] ⇄ [ Asna ] ⇄ [ Internet ]
+    ⬇             ⬆
+[ 14 - Consciência e Curadoria ]
+    ⬇             ⬆
+[ Projetos / Cursos / Produtos ]
+    ⬇
+[ Geração de valor e renda ]
+
+numpy==1.21.0
+requests==2.26.0
+python-dotenv==0.19.0
+SpeechRecognition==3.8.1
+pyttsx3==2.90
+PyAudio==0.2.11
+pyautogui==0.9.53
+pyttsx3
+speechrecognition
+transformers
+torch
+requests
+bs4
+pyaudio
+pywin32
